@@ -1,0 +1,379 @@
+openapi: 3.0.0
+info:
+  title: API del Microservicio de Historial y Desempeño
+  description: |
+    Especificación de la API para el Microservicio de Historial y Desempeño,
+    que gestiona el historial de cargos y las sanciones del personal.
+  version: 1.0.0
+
+servers:
+  - url: 'https://api.rrhh.com/historial/v1'
+
+tags:
+  - name: Historial de Cargos
+    description: Gestión del historial de cargos de los funcionarios.
+  - name: Sanciones
+    description: Gestión de sanciones y sus tipos.
+
+paths:
+  /historicos-cargo:
+    get:
+      tags:
+        - Historial de Cargos
+      summary: Obtener el historial de cargos
+      responses:
+        '200':
+          description: Historial de cargos obtenido.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoricoCargo'
+    post:
+      tags:
+        - Historial de Cargos
+      summary: Registrar un nuevo cargo en el historial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistoricoCargo'
+      responses:
+        '201':
+          description: Registro creado.
+        '400':
+          description: Datos de entrada inválidos.
+
+  /historicos-cargo/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID del registro de historial de cargo.
+    get:
+      tags:
+        - Historial de Cargos
+      summary: Obtener un registro de historial de cargo por su ID
+      responses:
+        '200':
+          description: Registro de historial de cargo obtenido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricoCargo'
+        '404':
+          description: Registro no encontrado.
+    patch:
+      tags:
+        - Historial de Cargos
+      summary: Actualizar parcialmente un registro de historial de cargo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistoricoCargoPatch'
+      responses:
+        '200':
+          description: Registro de historial de cargo actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricoCargo'
+        '400':
+          description: Datos de entrada inválidos.
+        '404':
+          description: Registro no encontrado.
+    delete:
+      tags:
+        - Historial de Cargos
+      summary: Eliminar un registro de historial de cargo por su ID
+      responses:
+        '204':
+          description: Registro eliminado exitosamente.
+        '404':
+          description: Registro no encontrado.
+
+  /sanciones:
+    get:
+      tags:
+        - Sanciones
+      summary: Obtener la lista de sanciones
+      responses:
+        '200':
+          description: Lista de sanciones obtenida.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sancion'
+    post:
+      tags:
+        - Sanciones
+      summary: Registrar una nueva sanción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sancion'
+      responses:
+        '201':
+          description: Sanción creada.
+        '400':
+          description: Datos de entrada inválidos.
+
+  /sanciones/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID de la sanción.
+    get:
+      tags:
+        - Sanciones
+      summary: Obtener una sanción por su ID
+      responses:
+        '200':
+          description: Sanción obtenida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sancion'
+        '404':
+          description: Sanción no encontrada.
+    patch:
+      tags:
+        - Sanciones
+      summary: Actualizar parcialmente una sanción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SancionPatch'
+      responses:
+        '200':
+          description: Sanción actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sancion'
+        '400':
+          description: Datos de entrada inválidos.
+        '404':
+          description: Sanción no encontrada.
+    delete:
+      tags:
+        - Sanciones
+      summary: Eliminar una sanción por su ID
+      responses:
+        '204':
+          description: Sanción eliminada exitosamente.
+        '404':
+          description: Sanción no encontrada.
+  /tipos-sancion:
+    get:
+      tags:
+        - Sanciones
+      summary: Obtener la lista de tipos de sanción
+      responses:
+        '200':
+          description: Lista de tipos de sanción obtenida.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoSancion'
+    post:
+      tags:
+        - Sanciones
+      summary: Crear un nuevo tipo de sanción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoSancion'
+      responses:
+        '201':
+          description: Tipo de sanción creado.
+        '400':
+          description: Datos de entrada inválidos.
+
+  /tipos-sancion/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID del tipo de sanción.
+    get:
+      tags:
+        - Sanciones
+      summary: Obtener un tipo de sanción por su ID
+      responses:
+        '200':
+          description: Tipo de sanción obtenido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoSancion'
+        '404':
+          description: Tipo de sanción no encontrado.
+    patch:
+      tags:
+        - Sanciones
+      summary: Actualizar parcialmente un tipo de sanción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoSancionPatch'
+      responses:
+        '200':
+          description: Tipo de sanción actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoSancion'
+        '400':
+          description: Datos de entrada inválidos.
+        '404':
+          description: Tipo de sanción no encontrado.
+    delete:
+      tags:
+        - Sanciones
+      summary: Eliminar un tipo de sanción por su ID
+      responses:
+        '204':
+          description: Tipo de sanción eliminado exitosamente.
+        '404':
+          description: Tipo de sanción no encontrado.
+components:
+  schemas:
+    HistoricoCargo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: ID único del registro.
+        funcionario_id:
+          type: integer
+          description: ID del funcionario.
+        cargo_id:
+          type: integer
+          description: ID del cargo.
+        fecha_ingreso:
+          type: string
+          format: date
+          description: Fecha de inicio en el cargo.
+        fecha_egreso:
+          type: string
+          format: date
+          description: Fecha de salida del cargo.
+      required:
+        - funcionario_id
+        - cargo_id
+        - fecha_ingreso
+
+    HistoricoCargoPatch:
+      type: object
+      properties:
+        funcionario_id:
+          type: integer
+          description: ID del funcionario.
+        cargo_id:
+          type: integer
+          description: ID del cargo.
+        fecha_ingreso:
+          type: string
+          format: date
+          description: Fecha de inicio en el cargo.
+        fecha_egreso:
+          type: string
+          format: date
+          description: Fecha de salida del cargo.
+      # No hay 'required' en PATCH para permitir actualizaciones parciales.
+
+    Sancion:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: ID único de la sanción.
+        funcionario_id:
+          type: integer
+          description: ID del funcionario sancionado.
+        tipo_sancion_id:
+          type: integer
+          description: ID del tipo de sanción.
+        motivo:
+          type: string
+          description: Motivo de la sanción.
+        periodo_desde:
+          type: string
+          format: date
+          description: Fecha de inicio de la sanción.
+        periodo_hasta:
+          type: string
+          format: date
+          description: Fecha de fin de la sanción.
+      required:
+        - funcionario_id
+        - tipo_sancion_id
+        - motivo
+
+    SancionPatch:
+      type: object
+      properties:
+        funcionario_id:
+          type: integer
+          description: ID del funcionario sancionado.
+        tipo_sancion_id:
+          type: integer
+          description: ID del tipo de sanción.
+        motivo:
+          type: string
+          description: Motivo de la sanción.
+        periodo_desde:
+          type: string
+          format: date
+          description: Fecha de inicio de la sanción.
+        periodo_hasta:
+          type: string
+          format: date
+          description: Fecha de fin de la sanción.
+      # No hay 'required' en PATCH.
+
+    TipoSancion:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: ID único del tipo de sanción.
+        descripcion:
+          type: string
+          description: Descripción del tipo de sanción.
+      required:
+        - descripcion
+
+    TipoSancionPatch:
+      type: object
+      properties:
+        descripcion:
+          type: string
+          description: Descripción del tipo de sanción.
