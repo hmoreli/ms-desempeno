@@ -1,7 +1,7 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from rrhh_common import Paginacion, Usuario, requiere_roles
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from rrhh_common import Paginacion, Usuario, requiere_roles, verificar_referencias
 from rrhh_common.crud import ROLES_ESCRITURA, ROLES_LECTURA, router_crud
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app import esquemas as e
 from app import modelos as m
 from app.db import obtener_sesion
+from app.referencias import CARGO, FUNCIONARIO
 
 # ms-desempeno es la fuente del cargo actual de cada funcionario: el registro del
 # historial sin fecha_egreso. Asignar un cargo nuevo cierra el anterior.
@@ -26,9 +27,11 @@ historial = APIRouter(tags=["Historial de Cargos"])
 )
 def asignar_cargo(
     datos: e.HistoricoCargo,
+    request: Request,
     db: Session = Depends(obtener_sesion),
     _: Usuario = Depends(requiere_roles(*ROLES_ESCRITURA)),
 ):
+    verificar_referencias(request, [FUNCIONARIO, CARGO], datos.model_dump())
     if datos.fecha_egreso is None:
         actual = db.scalar(
             select(m.HistoricoCargo).where(
@@ -93,6 +96,7 @@ routers = [
         nombre="Registro de historial de cargo",
         sesion=obtener_sesion,
         filtros={"funcionario_id": int, "cargo_id": int},
+        referencias=[FUNCIONARIO, CARGO],
         # El alta va por asignar_cargo (cierra el cargo actual anterior).
         metodos={"listar", "obtener", "actualizar", "eliminar"},
     ),
@@ -106,6 +110,7 @@ routers = [
         nombre="Sanción",
         sesion=obtener_sesion,
         filtros={"funcionario_id": int, "tipo_sancion_id": int},
+        referencias=[FUNCIONARIO],
     ),
     router_crud(
         modelo=m.TipoSancion,

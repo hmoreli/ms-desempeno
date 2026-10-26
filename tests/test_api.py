@@ -1,4 +1,4 @@
-from tests.conftest import CONSULTA, OPERADOR
+from tests.conftest import CONSULTA, OPERADOR, validador_simulado
 
 
 def crear(cliente, ruta, datos):
@@ -113,3 +113,24 @@ def test_cargo_nuevo_anterior_al_actual_da_conflicto(cliente):
         headers=OPERADOR,
     )
     assert r.status_code == 409
+
+
+def test_valida_funcionario_y_cargo(cliente):
+    cliente.app.state.referencias = validador_simulado(
+        "ms-funcionarios/funcionarios/5", "ms-organizacion/cargos/1"
+    )
+    crear(
+        cliente,
+        "/historicos-cargo",
+        {"funcionario_id": 5, "cargo_id": 1, "fecha_ingreso": "2024-01-01"},
+    )
+    r = cliente.post(
+        "/historicos-cargo",
+        json={"funcionario_id": 6, "cargo_id": 9, "fecha_ingreso": "2024-01-01"},
+        headers=OPERADOR,
+    )
+    assert r.status_code == 422
+    assert {d["mensaje"] for d in r.json()["detalles"]} == {
+        "No existe el funcionario 6",
+        "No existe el cargo 9",
+    }

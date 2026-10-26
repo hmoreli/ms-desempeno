@@ -11,6 +11,7 @@ Implementa el contrato [`contrato/openapi.yaml`](contrato/openapi.yaml) con Fast
 - `GET /cargos-actuales?funcionario_id=` devuelve el cargo abierto de cada funcionario.
 - Búsqueda por texto con `?q=` en tipos de sanción.
 - Un tipo de sanción en uso no se puede borrar (409).
+- Los ids de otros servicios (funcionario y cargo) se verifican con el servicio dueño antes de guardar: 422 si no existe, 503 si no responde. Usa el client `ms-desempeno` de Keycloak (`SERVICIO_CLIENT_ID`/`SERVICIO_CLIENT_SECRET`); sin esas variables, como en las pruebas, no se verifica.
 
 ## Desarrollo
 
