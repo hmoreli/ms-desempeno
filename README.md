@@ -7,6 +7,9 @@ Implementa el contrato [`contrato/openapi.yaml`](contrato/openapi.yaml) con Fast
 ## Respecto al contrato
 
 - Filtros: `/historicos-cargo?funcionario_id=&cargo_id=`, `/sanciones?funcionario_id=&tipo_sancion_id=`.
+- Cada funcionario tiene a lo sumo un cargo abierto (`fecha_egreso` vacía). `POST /historicos-cargo` cierra el cargo abierto el día anterior al nuevo `fecha_ingreso`; si el nuevo no es posterior responde 409.
+- `GET /cargos-actuales?funcionario_id=` devuelve el cargo abierto de cada funcionario.
+- Búsqueda por texto con `?q=` en tipos de sanción.
 - Un tipo de sanción en uso no se puede borrar (409).
 
 ## Desarrollo

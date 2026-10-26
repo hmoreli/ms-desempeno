@@ -2,7 +2,7 @@
 
 Revision ID: 0001
 Revises: 
-Create Date: 2026-10-25 20:02:18.328084
+Create Date: 2026-10-26 14:34:58.768458
 """
 from collections.abc import Sequence
 
@@ -28,6 +28,7 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id', name=op.f('pk_historico_cargo'))
     )
     op.create_index(op.f('ix_historico_cargo_funcionario_id'), 'historico_cargo', ['funcionario_id'], unique=False)
+    op.create_index('uq_historico_cargo_actual', 'historico_cargo', ['funcionario_id'], unique=True, postgresql_where=sa.text('fecha_egreso IS NULL'), sqlite_where=sa.text('fecha_egreso IS NULL'))
     op.create_table('tipo_sancion',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('descripcion', sa.String(length=100), nullable=False),
@@ -54,6 +55,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_sancion_funcionario_id'), table_name='sancion')
     op.drop_table('sancion')
     op.drop_table('tipo_sancion')
+    op.drop_index('uq_historico_cargo_actual', table_name='historico_cargo', postgresql_where=sa.text('fecha_egreso IS NULL'), sqlite_where=sa.text('fecha_egreso IS NULL'))
     op.drop_index(op.f('ix_historico_cargo_funcionario_id'), table_name='historico_cargo')
     op.drop_table('historico_cargo')
     # ### end Alembic commands ###

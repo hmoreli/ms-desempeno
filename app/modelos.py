@@ -1,15 +1,24 @@
 from datetime import date
 
-from sqlalchemy import CheckConstraint, ForeignKey, String, Text
+from sqlalchemy import CheckConstraint, ForeignKey, Index, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
 
 
 class HistoricoCargo(Base):
+    """Fuente del cargo actual: el registro sin fecha_egreso (como mucho uno por funcionario)."""
+
     __tablename__ = "historico_cargo"
     __table_args__ = (
         CheckConstraint("fecha_egreso IS NULL OR fecha_egreso >= fecha_ingreso", name="egreso"),
+        Index(
+            "uq_historico_cargo_actual",
+            "funcionario_id",
+            unique=True,
+            postgresql_where=text("fecha_egreso IS NULL"),
+            sqlite_where=text("fecha_egreso IS NULL"),
+        ),
     )
     id: Mapped[int] = mapped_column(primary_key=True)
     funcionario_id: Mapped[int] = mapped_column(index=True)  # ms-funcionarios

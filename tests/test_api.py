@@ -79,3 +79,37 @@ def test_rutas_del_contrato_existen(cliente):
     rutas = set(cliente.get("/openapi.json").json()["paths"])
     for base in ("/historicos-cargo", "/sanciones", "/tipos-sancion"):
         assert {base, base + "/{id}"} <= rutas
+
+
+def test_cargo_nuevo_cierra_el_actual(cliente):
+    crear(
+        cliente,
+        "/historicos-cargo",
+        {"funcionario_id": 5, "cargo_id": 1, "fecha_ingreso": "2024-01-01"},
+    )
+    crear(
+        cliente,
+        "/historicos-cargo",
+        {"funcionario_id": 5, "cargo_id": 2, "fecha_ingreso": "2026-10-01"},
+    )
+    historial = cliente.get("/historicos-cargo?funcionario_id=5", headers=CONSULTA).json()
+    assert [(h["cargo_id"], h["fecha_egreso"]) for h in historial] == [
+        (1, "2026-09-30"),
+        (2, None),
+    ]
+    actual = cliente.get("/cargos-actuales?funcionario_id=5", headers=CONSULTA).json()
+    assert [a["cargo_id"] for a in actual] == [2]
+
+
+def test_cargo_nuevo_anterior_al_actual_da_conflicto(cliente):
+    crear(
+        cliente,
+        "/historicos-cargo",
+        {"funcionario_id": 5, "cargo_id": 1, "fecha_ingreso": "2024-01-01"},
+    )
+    r = cliente.post(
+        "/historicos-cargo",
+        json={"funcionario_id": 5, "cargo_id": 2, "fecha_ingreso": "2023-01-01"},
+        headers=OPERADOR,
+    )
+    assert r.status_code == 409
