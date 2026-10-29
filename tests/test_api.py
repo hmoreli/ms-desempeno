@@ -131,6 +131,6 @@ def test_valida_funcionario_y_cargo(cliente):
     )
     assert r.status_code == 422
     assert {d["mensaje"] for d in r.json()["detalles"]} == {
-        "No existe el funcionario 6",
-        "No existe el cargo 9",
+        "Funcionario 6 no existe",
+        "Cargo 9 no existe",
     }
