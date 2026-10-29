@@ -1,0 +1,846 @@
+# Generado desde el código (app.openapi()). No editar a mano.
+openapi: 3.1.0
+info:
+  title: Microservicio de Historial y Desempeño
+  version: 1.0.0
+paths:
+  /historicos-cargo:
+    post:
+      tags:
+      - Historial de Cargos
+      summary: Registrar un cargo en el historial
+      description: Si el registro no tiene fecha_egreso pasa a ser el cargo actual y el cargo actual anterior
+        se cierra el día antes de fecha_ingreso.
+      operationId: asignar_cargo_historicos_cargo_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistoricoCargo'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricoCargoSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Historial de Cargos
+      summary: Listar historicos-cargo
+      operationId: listar_historicos_cargo_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          description: Cantidad de registros
+          default: 50
+          title: Limit
+        description: Cantidad de registros
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Registros a saltear
+          default: 0
+          title: Offset
+        description: Registros a saltear
+      - name: funcionario_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filtrar por funcionario_id
+          title: Funcionario Id
+        description: Filtrar por funcionario_id
+      - name: cargo_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filtrar por cargo_id
+          title: Cargo Id
+        description: Filtrar por cargo_id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoricoCargoSalida'
+                title: Response Listar Historicos Cargo Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /cargos-actuales:
+    get:
+      tags:
+      - Historial de Cargos
+      summary: Cargo actual de cada funcionario
+      description: Registros del historial sin fecha_egreso. Filtrar por funcionario_id para uno solo,
+        o por cargo_id para ver quiénes ocupan un cargo.
+      operationId: cargos_actuales_cargos_actuales_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: funcionario_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Funcionario Id
+      - name: cargo_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cargo Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          description: Cantidad de registros
+          default: 50
+          title: Limit
+        description: Cantidad de registros
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Registros a saltear
+          default: 0
+          title: Offset
+        description: Registros a saltear
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoricoCargoSalida'
+                title: Response Cargos Actuales Cargos Actuales Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /historicos-cargo/{id}:
+    get:
+      tags:
+      - Historial de Cargos
+      summary: Obtener registro de historial de cargo por ID
+      operationId: obtener_historicos_cargo__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricoCargoSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Historial de Cargos
+      summary: Actualizar registro de historial de cargo
+      operationId: actualizar_historicos_cargo__id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistoricoCargoPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricoCargoSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Historial de Cargos
+      summary: Eliminar registro de historial de cargo
+      operationId: eliminar_historicos_cargo__id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sanciones:
+    get:
+      tags:
+      - Sanciones
+      summary: Listar sanciones
+      operationId: listar_sanciones_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          description: Cantidad de registros
+          default: 50
+          title: Limit
+        description: Cantidad de registros
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Registros a saltear
+          default: 0
+          title: Offset
+        description: Registros a saltear
+      - name: funcionario_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filtrar por funcionario_id
+          title: Funcionario Id
+        description: Filtrar por funcionario_id
+      - name: tipo_sancion_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filtrar por tipo_sancion_id
+          title: Tipo Sancion Id
+        description: Filtrar por tipo_sancion_id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SancionSalida'
+                title: Response Listar Sanciones Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Sanciones
+      summary: Crear sanción
+      operationId: crear__sanciones_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sancion'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SancionSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sanciones/{id}:
+    get:
+      tags:
+      - Sanciones
+      summary: Obtener sanción por ID
+      operationId: obtener_sanciones__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SancionSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Sanciones
+      summary: Actualizar sanción
+      operationId: actualizar_sanciones__id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SancionPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SancionSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Sanciones
+      summary: Eliminar sanción
+      operationId: eliminar_sanciones__id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tipos-sancion:
+    get:
+      tags:
+      - Sanciones
+      summary: Listar tipos-sancion
+      operationId: listar_tipos_sancion_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          description: Cantidad de registros
+          default: 50
+          title: Limit
+        description: Cantidad de registros
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Registros a saltear
+          default: 0
+          title: Offset
+        description: Registros a saltear
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: 'Buscar texto (sin distinguir mayúsculas) en: descripcion'
+          title: Q
+        description: 'Buscar texto (sin distinguir mayúsculas) en: descripcion'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoSancionSalida'
+                title: Response Listar Tipos Sancion Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Sanciones
+      summary: Crear tipo de sanción
+      operationId: crear__tipos_sancion_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoSancion'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoSancionSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tipos-sancion/{id}:
+    get:
+      tags:
+      - Sanciones
+      summary: Obtener tipo de sanción por ID
+      operationId: obtener_tipos_sancion__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoSancionSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Sanciones
+      summary: Actualizar tipo de sanción
+      operationId: actualizar_tipos_sancion__id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoSancionPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoSancionSalida'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Sanciones
+      summary: Eliminar tipo de sanción
+      operationId: eliminar_tipos_sancion__id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HistoricoCargo:
+      properties:
+        funcionario_id:
+          type: integer
+          title: Funcionario Id
+        cargo_id:
+          type: integer
+          title: Cargo Id
+        fecha_ingreso:
+          type: string
+          format: date
+          title: Fecha Ingreso
+        fecha_egreso:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Fecha Egreso
+      type: object
+      required:
+      - funcionario_id
+      - cargo_id
+      - fecha_ingreso
+      title: HistoricoCargo
+    HistoricoCargoPatch:
+      properties:
+        funcionario_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Funcionario Id
+        cargo_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cargo Id
+        fecha_ingreso:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Fecha Ingreso
+        fecha_egreso:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Fecha Egreso
+      type: object
+      title: HistoricoCargoPatch
+    HistoricoCargoSalida:
+      properties:
+        id:
+          type: integer
+          title: Id
+        funcionario_id:
+          type: integer
+          title: Funcionario Id
+        cargo_id:
+          type: integer
+          title: Cargo Id
+        fecha_ingreso:
+          type: string
+          format: date
+          title: Fecha Ingreso
+        fecha_egreso:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Fecha Egreso
+      type: object
+      required:
+      - id
+      - funcionario_id
+      - cargo_id
+      - fecha_ingreso
+      title: HistoricoCargoSalida
+    Sancion:
+      properties:
+        funcionario_id:
+          type: integer
+          title: Funcionario Id
+        tipo_sancion_id:
+          type: integer
+          title: Tipo Sancion Id
+        motivo:
+          type: string
+          minLength: 1
+          title: Motivo
+        periodo_desde:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Periodo Desde
+        periodo_hasta:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Periodo Hasta
+      type: object
+      required:
+      - funcionario_id
+      - tipo_sancion_id
+      - motivo
+      title: Sancion
+    SancionPatch:
+      properties:
+        funcionario_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Funcionario Id
+        tipo_sancion_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Tipo Sancion Id
+        motivo:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Motivo
+        periodo_desde:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Periodo Desde
+        periodo_hasta:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Periodo Hasta
+      type: object
+      title: SancionPatch
+    SancionSalida:
+      properties:
+        id:
+          type: integer
+          title: Id
+        funcionario_id:
+          type: integer
+          title: Funcionario Id
+        tipo_sancion_id:
+          type: integer
+          title: Tipo Sancion Id
+        motivo:
+          type: string
+          minLength: 1
+          title: Motivo
+        periodo_desde:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Periodo Desde
+        periodo_hasta:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Periodo Hasta
+      type: object
+      required:
+      - id
+      - funcionario_id
+      - tipo_sancion_id
+      - motivo
+      title: SancionSalida
+    TipoSancion:
+      properties:
+        descripcion:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Descripcion
+      type: object
+      required:
+      - descripcion
+      title: TipoSancion
+    TipoSancionPatch:
+      properties:
+        descripcion:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Descripcion
+      type: object
+      title: TipoSancionPatch
+    TipoSancionSalida:
+      properties:
+        id:
+          type: integer
+          title: Id
+        descripcion:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Descripcion
+      type: object
+      required:
+      - id
+      - descripcion
+      title: TipoSancionSalida
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
+servers:
+- url: /api/desempeno
+  description: Detrás de Kong
